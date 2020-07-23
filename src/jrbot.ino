@@ -1,7 +1,3 @@
-#define XENTRINOBOT
-#include "xentrino_base_config.h"
-#include "xentrino.h"
-#include "Encoder.h"
 
 #define XENTRINOBOT
 #include "xentrino_base_config.h"
@@ -81,8 +77,9 @@ void setup() {
 
 void loop() {
   nh.spinOnce();
+   // enter timed loop
   if((millis()-lastMilli) >= LOOPTIME)   
-  {                                                                           // enter timed loop
+  {                                                                
         lastMilli = millis();
           // compute PWM value for left and right motor. 
         speed_act_left = M1_Wheel.getRPM(M1_Encoder.read());
