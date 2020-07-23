@@ -3,6 +3,11 @@
 #include "xentrino.h"
 #include "Encoder.h"
 
+#define XENTRINOBOT
+#include "xentrino_base_config.h"
+#include "xentrino.h"
+#include "Encoder.h"
+
 #include <ros.h>
 #include <std_msgs/String.h>
 #include <geometry_msgs/Vector3Stamped.h>
@@ -21,12 +26,12 @@ Controller M2_control(Controller::MOTOR_DRIVER, MOTOR2_PWM, MOTOR2_IN_A, MOTOR2_
 PID M1_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D); // left
 PID M2_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D); // right
 
+//Kinematics Kinematics(MAX_RPM, WHEEL_DIAMETER, FR_WHEELS_DISTANCE, LR_WHEELS_DISTANCE); 
  
 //initializing all the variables
 #define LOOPTIME                      100     //Looptime in millisecond
 const byte noCommLoopMax = 10;                //number of main loops the robot will execute without communication before stopping
 unsigned int noCommLoops = 0;                 //main loop without communication counter
-
 
 unsigned long lastMilli = 0;
 const double wheelbase = 0.187;  
@@ -40,8 +45,6 @@ double speed_act_right = 0;                   //Actual speed for right wheel in 
 int PWM_leftMotor = 0;                     //PWM command for left motor
 int PWM_rightMotor = 0;                    //PWM command for right motor 
 
-ros::NodeHandle nh;
-
 //function that will be called when receiving command from host
 void handle_cmd (const geometry_msgs::Twist& cmd_vel) {
   noCommLoops = 0;                                                  //Reset the counter for number of main loops without communication
@@ -53,6 +56,7 @@ void handle_cmd (const geometry_msgs::Twist& cmd_vel) {
   speed_req_right = speed_req + angular_speed_req*(wheelbase/2);    //Calculate the required speed for the right motor to comply with commanded linear and angular speeds
 }
 
+ros::NodeHandle nh;
 ros::Subscriber<geometry_msgs::Twist> cmd_vel("cmd_vel", handle_cmd);   //create a subscriber to ROS topic for velocity commands (will execute "handle_cmd" function when receiving data)
 geometry_msgs::Vector3Stamped speed_msg;                                //create a "speed_msg" ROS message
 ros::Publisher speed_pub("speed", &speed_msg);                          //create a publisher to ROS topic "speed" using the "speed_msg" type
