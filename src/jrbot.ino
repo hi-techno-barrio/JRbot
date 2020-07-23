@@ -1,4 +1,10 @@
 
+/* ------------------------------------------------------------------------------------------------------------- */
+//  JRbot  
+// Hi-Techno Barrio
+// by: Christopher Coballes
+/*---------------------------------------------------------------------------------------------------------------*/
+
 #define XENTRINOBOT
 #include "xentrino_base_config.h"
 #include "xentrino.h"
@@ -77,6 +83,9 @@ void loop() {
     nh.spinOnce();
 }
 
+/* ------------------------------------------------------------------------------------------------------------- */
+/*                                                                                                               */
+/*---------------------------------------------------------------------------------------------------------------*/
 void  stopBase()
 {
        req_linear_vel_x = 0;
@@ -84,6 +93,9 @@ void  stopBase()
        req_angular_vel_z = 0; 
 }
 
+/* ------------------------------------------------------------------------------------------------------------- */
+/*                                                                                                               */
+/*---------------------------------------------------------------------------------------------------------------*/
 void move_base()
 {
         Kinematics::rpm req_rpm = Kinematics.expected_RPM(req_linear_vel_x, req_linear_vel_y, req_angular_vel_z);
@@ -100,8 +112,10 @@ void move_base()
         publishSpeed(current_vel);  
 }
 
+/* ------------------------------------------------------------------------------------------------------------- */
 //Publish function for odometry, uses a vector type message to send the data 
 //(message type is not meant for that but that's easier than creating a specific message type)
+/*---------------------------------------------------------------------------------------------------------------*/
 void publishSpeed( Kinematics::velocities actual_vel) {
         nh.loginfo("Publishing odometry");
         raw_vel_msg.header.stamp = nh.now();      //timestamp for odometry data
