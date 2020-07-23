@@ -4,7 +4,6 @@
 // Hi-Techno Barrio
 // by: Christopher Coballes
 /*---------------------------------------------------------------------------------------------------------------*/
-
 #define XENTRINOBOT
 #include "xentrino_base_config.h"
 #include "xentrino.h"
@@ -66,6 +65,7 @@ void setup() {
 
 void loop() {
  static unsigned long prev_control_time = 0;
+ 
   //call all the callbacks waiting to be called
    if ((millis() - prev_command_time) >= 400)
     {
@@ -78,8 +78,16 @@ void loop() {
        move_base(); 
        prev_control_time = millis();
       }
-    //this block stops the motor when no command is received
-  
+    //this block displays the encoder readings. change DEBUG to 0 if you don't want to display
+  /*  if(DEBUG)
+    {
+        if ((millis() - prev_debug_time) >= (1000 / DEBUG_RATE))
+        {
+            printDebug();
+            prev_debug_time = millis();
+        }
+    }
+  */
     nh.spinOnce();
 }
 
@@ -100,7 +108,9 @@ void move_base()
 {
         Kinematics::rpm req_rpm = Kinematics.expected_RPM(req_linear_vel_x, req_linear_vel_y, req_angular_vel_z);
         int  M1_RPM = M1_Wheel.getRPM(M1_Encoder.read());
+           nh.loginfo(M1_Encoder.read());
         int  M2_RPM  = M2_Wheel.getRPM(M2_Encoder.read());
+           nh.loginfo(M2_Encoder.read());
         
      //the required rpm is capped at -/+ MAX_RPM to prevent the PID from having too much error
      //the PWM value sent to the motor driver is the calculated PID based on required RPM vs measured RPM
@@ -125,3 +135,17 @@ void publishSpeed( Kinematics::velocities actual_vel) {
         raw_vel_pub.publish(&raw_vel_msg);
 
 }
+/* ------------------------------------------------------------------------------------------------------------- */
+//
+/*---------------------------------------------------------------------------------------------------------------*/
+/*void printDebug()
+{
+    char buffer[15];
+
+    sprintf (buffer, "Encoder FrontLeft  : %ld", M1_Encoder.read());
+    nh.loginfo(buffer);
+    sprintf (buffer, "Encoder FrontRight : %ld", M2_Encoder.read());
+    nh.loginfo(buffer);
+   
+}
+*/
