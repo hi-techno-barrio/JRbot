@@ -79,47 +79,47 @@ void loop() {
   nh.spinOnce();
   if((millis()-lastMilli) >= LOOPTIME)   
   {                                                                           // enter timed loop
-    lastMilli = millis();
-
-      // compute PWM value for left and right motor. 
-      speed_act_left = M1_Wheel(M1_Encoder.read()); 
-      PWM_leftMotor = M1_pid.compute(speed_req_left, speed_act_left);
-      speed_act_right = M2_Wheel.getRPM(M2_Encoder.read());
-      PWM_rightMotor = M2_pid.compute(speed_req_right, speed_act_right);    
-                                               
-   
-   //Stopping if too much time without command
-    if ((noCommLoops >= noCommLoopMax)&& (speed_req_left == 0))
-    {  M1_control.spin(0);
-    }
-    else if (PWM_leftMotor > 0){   //Going forward or backward 
-      M1_control.spin(PWM_leftMotor);
-    }
-      
-    //Stopping if too much time without command or no rignt motor rotation
-    if ((noCommLoops >= noCommLoopMax) && (speed_req_right == 0))
-    {  M2_control.spin(0);
-    }
-     //Going forward or backward
-    else if (PWM_rightMotor > 0){                     
-       M2_control.spin(PWM_rightMotor);
-    }
-   
-    if((millis()-lastMilli) >= LOOPTIME){         //write an error if execution time of the loop in longer than the specified looptime
-      Serial.println(" TOO LONG ");
-    }
-
-    noCommLoops++;
-    if (noCommLoops == 65535){
-      noCommLoops = noCommLoopMax;
-    }
+        lastMilli = millis();
+          // compute PWM value for left and right motor. 
+        speed_act_left = M1_Wheel.getRPM(M1_Encoder.read());
+        PWM_leftMotor = M1_pid.compute(speed_req_left, speed_act_left);  
+        speed_act_right = M2_Wheel.getRPM(M2_Encoder.read());
+        PWM_rightMotor = M2_pid.compute(speed_req_right, speed_act_right);    
+                                                   
+       
+       //Stopping if too much time without command
+        if ((noCommLoops >= noCommLoopMax)&& (speed_req_left == 0))
+        {  M1_control.spin(0);
+        }
+        else {   //Going forward or backward 
+          M1_control.spin(PWM_leftMotor);
+        }
+          
+        //Stopping if too much time without command or no rignt motor rotation
+        if ((noCommLoops >= noCommLoopMax) && (speed_req_right == 0))
+        {  M2_control.spin(0);
+        }
+         //Going forward or backward
+        else {                     
+           M2_control.spin(PWM_rightMotor);
+        }
+       
+        if((millis()-lastMilli) >= LOOPTIME){         //write an error if execution time of the loop in longer than the specified looptime
+          Serial.println(" TOO LONG ");
+        }
+    
+        noCommLoops++;
+        if (noCommLoops == 65535){
+          noCommLoops = noCommLoopMax;
+        }
 
     
     publishSpeed(LOOPTIME);   //Publish odometry on ROS topic
   }
  }
 
-//Publish function for odometry, uses a vector type message to send the data (message type is not meant for that but that's easier than creating a specific message type)
+//Publish function for odometry, uses a vector type message to send the data 
+//(message type is not meant for that but that's easier than creating a specific message type)
 void publishSpeed(double time) {
   speed_msg.header.stamp = nh.now();      //timestamp for odometry data
   speed_msg.vector.x = speed_act_left;    //left wheel speed (in m/s)
