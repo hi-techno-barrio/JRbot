@@ -1,7 +1,7 @@
 JRbot  is a small and handy robot for the beginner.
 
 This aim to build an affordable robot kits which  is compatible to ROS.
-Th
+
 
 Parts:
 
