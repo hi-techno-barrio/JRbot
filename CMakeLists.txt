@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(nox_description)
+project(nox)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,9 +8,11 @@ project(nox_description)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  joint_state_publisher
-  robot_state_publisher
-  urdf
+  gmapping
+  nox_description
+  roscpp
+  rospy
+  teb_local_planner
 )
 
 ## System dependencies are found with CMake's conventions
@@ -104,8 +106,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES nox_description
-#  CATKIN_DEPENDS joint_state_publisher robot_state_publisher rviz urdf
+#  LIBRARIES nox
+#  CATKIN_DEPENDS gmapping navigation nox_description ros_control ros_controllers roscpp rospy teb_local_planner
 #  DEPENDS system_lib
 )
 
@@ -122,7 +124,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/nox_description.cpp
+#   src/${PROJECT_NAME}/nox.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -133,7 +135,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/nox_description_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/nox_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -181,6 +183,7 @@ include_directories(
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
 #   # myfile1
+#   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
@@ -189,10 +192,13 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_nox_description.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_nox.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_executable(nox_controller src/nox_controller.cpp)
+target_link_libraries(nox_controller ${catkin_LIBRARIES})
