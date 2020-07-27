@@ -9,10 +9,17 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <geometry_msgs/TransformStamped.h>
 
+#include <ros/ros.h>
+#include <tf/transform_broadcaster.h>
+#include <nav_msgs/Odometry.h>
+#include <geometry_msgs/Vector3.h>
+#include <stdio.h>
+#include <cmath>
+
 class RJbotBase
 {
 public:
-    LinoBase();
+    RJbotBase();
     void velCallback(const lino_msgs::Velocities& vel);
 
 private:
