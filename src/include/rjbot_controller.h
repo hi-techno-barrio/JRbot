@@ -34,7 +34,7 @@ private:
 
   ros::NodeHandle n;
   ros::NodeHandle nh_private_("~");
-  ros::Subscriber sub = n.subscribe("speed", 50, velCallback);
+  ros::Subscriber sub = n.subscribe("vel", 50, velCallback);
   ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
   tf::TransformBroadcaster broadcaster;  
     
