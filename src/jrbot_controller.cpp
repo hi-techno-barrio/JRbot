@@ -1,43 +1,53 @@
 
 #include <include/rjbot.h>
 
-double radius = 0.04;                              //Wheel radius, in m
-double wheelbase = 0.187;                          //Wheelbase, in m
-double two_pi = 6.28319;
-double speed_act_left = 0.0;
-double speed_act_right = 0.0;
-double speed_req1 = 0.0;
-double speed_req2 = 0.0;
-double speed_dt = 0.0;
-double x_pos = 0.0;
-double y_pos = 0.0;
-double theta = 0.0;
+
+
+
+
+linear_velocity_x_(0),
+linear_velocity_y_(0),
+angular_velocity_z_(0),
+last_vel_time_(0),
+vel_dt_(0),
+x_pos_(0),  //double x_pos = 0.0;
+y_pos_(0),  // double y_pos = 0.0;
+heading_(0)  // double theta = 0.0;
 ros::Time current_time;
 ros::Time speed_time(0.0);
 
-void handle_speed( const geometry_msgs::Vector3Stamped& speed) {
-  speed_act_left = trunc(speed.vector.x*100)/100;
-  ROS_INFO("speed left : %f", speed_act_left);
-  speed_act_right = trunc(speed.vector.y*100)/100;
-  ROS_INFO("speed right : %f", speed_act_right);
+ void velCallback( const geometry_msgs::Vector3Stamped& vel) {
+// void handle_speed( const geometry_msgs::Vector3Stamped& speed) {
+//  speed_act_left = trunc(speed.vector.x*100)/100;
+//  ROS_INFO("speed left : %f", speed_act_left);
+//  speed_act_right = trunc(speed.vector.y*100)/100;
+//  ROS_INFO("speed right : %f", speed_act_right);
   speed_dt = speed.vector.z;
   speed_time = speed.header.stamp;
+   
+   
+   ros::Time current_time = ros::Time::now();
+
+    linear_velocity_x_  = vel.vector.x;
+    linear_velocity_y_  = vel.vector.x;
+    angular_velocity_z_ = vel.vector.z;
+                  temp??      = vel.header.stamp;
+   
+    vel_dt_ = (current_time - last_vel_time_).toSec();
+    last_vel_time_ = current_time;
 }
 
 int main(int argc, char** argv){
   ros::init(argc, argv, "rjbot_controller");
 
-  ros::NodeHandle n;
-  ros::NodeHandle nh_private_("~");
-  ros::Subscriber sub = n.subscribe("speed", 50, handle_speed);
-  ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
-  tf::TransformBroadcaster broadcaster;  
+ //ros::init(argc, argv, "lino_base_node");
+ //   LinoBase lino;
+  //  ros::spin();
+ //   return 0;
   
   double rate = 10.0;
-  double linear_scale_positive = 1.0;
-  double linear_scale_negative = 1.0;
-  double angular_scale_positive = 1.0;
-  double angular_scale_negative = 1.0;
+ 
+//---
   bool publish_tf = true;
   double dt = 0.0;
   double dx = 0.0;
@@ -54,20 +64,17 @@ int main(int argc, char** argv){
   ros::Duration d(1.0);
   nh_private_.getParam("publish_rate", rate);
   nh_private_.getParam("publish_tf", publish_tf);
-  nh_private_.getParam("linear_scale_positive", linear_scale_positive);
-  nh_private_.getParam("linear_scale_negative", linear_scale_negative);
-  nh_private_.getParam("angular_scale_positive", angular_scale_positive);
-  nh_private_.getParam("angular_scale_negative", angular_scale_negative);
+
 
   ros::Rate r(rate);
   while(n.ok()){
     ros::spinOnce();
     current_time = speed_time;
     dt = speed_dt;					//Time in s
-    ROS_INFO("dt : %f", dt);
-    dxy = (speed_act_left+speed_act_right)*dt/2;
-    ROS_INFO("dxy : %f", dxy);
-    dth = ((speed_act_right-speed_act_left)*dt)/wheelbase;
+ //   ROS_INFO("dt : %f", dt);
+  //  dxy = (speed_act_left+speed_act_right)*dt/2;
+  //  ROS_INFO("dxy : %f", dxy);
+ //   dth = ((speed_act_right-speed_act_left)*dt)/wheelbase;
 
     if (dth > 0) dth *= angular_scale_positive;
     if (dth < 0) dth *= angular_scale_negative;
@@ -80,7 +87,12 @@ int main(int argc, char** argv){
     x_pos += (cos(theta) * dx - sin(theta) * dy);
     y_pos += (sin(theta) * dx + cos(theta) * dy);
     theta += dth;
-
+//--
+    
+    double delta_x = (linear_velocity_x_ * cos(heading_) - linear_velocity_y_ * sin(heading_)) * vel_dt_; //m
+    double delta_y = (linear_velocity_x_ * sin(heading_) + linear_velocity_y_ * cos(heading_)) * vel_dt_; //m
+    double delta_heading = angular_velocity_z_ * vel_dt_; //radians
+    
     if(theta >= two_pi) theta -= two_pi;
     if(theta <= -two_pi) theta += two_pi;
 
@@ -89,7 +101,7 @@ int main(int argc, char** argv){
 
     if(publish_tf) {
       geometry_msgs::TransformStamped t;
-      geometry_msgs::TransformStamped k;
+    //  geometry_msgs::TransformStamped k;
       
       t.header.frame_id = odom;
       t.child_frame_id = base_link;
@@ -99,16 +111,16 @@ int main(int argc, char** argv){
       t.transform.rotation = odom_quat;
       t.header.stamp = current_time;
       
-      k.header.frame_id = kinect;
-      k.child_frame_id = camera_link;
-      k.transform.translation.x = 0.0;
-      k.transform.translation.y = 0.0;
-      k.transform.translation.z = 0.0;
-      k.transform.rotation = empty_quat;
-      k.header.stamp = current_time;
+    //  k.header.frame_id = kinect;
+    //  k.child_frame_id = camera_link;
+    //  k.transform.translation.x = 0.0;
+    //  k.transform.translation.y = 0.0;
+    //  k.transform.translation.z = 0.0;
+    //  k.transform.rotation = empty_quat;
+     // k.header.stamp = current_time;
 
       broadcaster.sendTransform(t);
-      broadcaster.sendTransform(k);
+     // broadcaster.sendTransform(k);
     }
 
     nav_msgs::Odometry odom_msg;
@@ -160,4 +172,16 @@ int main(int argc, char** argv){
     odom_pub.publish(odom_msg);
     r.sleep();
   }
+}
+
+void callParam()
+{
+  double linear_scale_positive = 1.0;
+  double linear_scale_negative = 1.0;
+  double angular_scale_positive = 1.0;
+  double angular_scale_negative = 1.0;
+  nh_private_.getParam("linear_scale_positive", linear_scale_positive);
+  nh_private_.getParam("linear_scale_negative", linear_scale_negative);
+  nh_private_.getParam("angular_scale_positive", angular_scale_positive);
+  nh_private_.getParam("angular_scale_negative", angular_scale_negative);
 }
