@@ -20,7 +20,8 @@ class RJbotBase
 {
 public:
     RJbotBase();
-    void velCallback(const lino_msgs::Velocities& vel);
+    //void velCallback(const lino_msgs::Velocities& vel);
+    void velCallback( const geometry_msgs::Vector3Stamped& speed)
 
 private:
     ros::NodeHandle nh_;
