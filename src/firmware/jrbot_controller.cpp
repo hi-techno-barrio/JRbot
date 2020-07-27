@@ -29,7 +29,7 @@ void handle_speed( const geometry_msgs::Vector3Stamped& speed) {
 }
 
 int main(int argc, char** argv){
-  ros::init(argc, argv, "nox_controller");
+  ros::init(argc, argv, "rjbot_controller");
 
   ros::NodeHandle n;
   ros::NodeHandle nh_private_("~");
