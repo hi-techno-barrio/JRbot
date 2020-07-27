@@ -13,10 +13,9 @@
   ros::Time speed_time(0.0);
 
   void velCallback( const geometry_msgs::Vector3Stamped& vel) {
-  speed_dt = speed.vector.z;
-  speed_time = speed.header.stamp;
-   
-   
+ // speed_dt = speed.vector.z;
+  //speed_time = speed.header.stamp;
+    
   ros::Time current_time = ros::Time::now();
   linear_velocity_x_  = vel.vector.x;
   linear_velocity_y_  = vel.vector.x;
