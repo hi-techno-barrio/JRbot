@@ -1,6 +1,6 @@
 # included files to rjbot_controller
-#ifndef LINO_BASE_H
-#define LINO_BASE_H
+#ifndef RJBOT_BASE_H
+#define RJBOT_BASE_H
 
 #include <ros/ros.h>
 #include <lino_msgs/Velocities.h>
@@ -9,7 +9,7 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <geometry_msgs/TransformStamped.h>
 
-class LinoBase
+class RJbotBase
 {
 public:
     LinoBase();
