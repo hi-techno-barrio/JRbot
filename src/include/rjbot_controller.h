@@ -21,18 +21,24 @@ class RJbotBase
 public:
     RJbotBase();
     //void velCallback(const lino_msgs::Velocities& vel);
-    void velCallback( const geometry_msgs::Vector3Stamped& speed)
+    // void velCallback( const geometry_msgs::Vector3Stamped& speed)
 
 private:
-    ros::NodeHandle nh_;
-    ros::Publisher odom_publisher_;
-    ros::Subscriber velocity_subscriber_;
+  //  ros::NodeHandle nh_;
+ //   ros::Publisher odom_publisher_;
+ //   ros::Subscriber velocity_subscriber_;
     //tf2_ros::TransformBroadcaster odom_broadcaster_;
-    tf2::Quaternion odom_quat;
-    geometry_msgs::TransformStamped odom_trans;
-    nav_msgs::Odometry odom;
+ //   tf2::Quaternion odom_quat;
+ //   geometry_msgs::TransformStamped odom_trans;
+//    nav_msgs::Odometry odom;
 
-    float steering_angle_;
+  ros::NodeHandle n;
+  ros::NodeHandle nh_private_("~");
+  ros::Subscriber sub = n.subscribe("speed", 50, velCallback);
+  ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
+  tf::TransformBroadcaster broadcaster;  
+    
+ //   float steering_angle_;
     float linear_velocity_x_;
     float linear_velocity_y_;
     float angular_velocity_z_;
