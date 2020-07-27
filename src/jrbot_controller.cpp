@@ -1,43 +1,33 @@
 
 #include <include/rjbot.h>
 
+  linear_velocity_x_(0),
+  linear_velocity_y_(0),
+  angular_velocity_z_(0),
+  last_vel_time_(0),
+  vel_dt_(0),
+  x_pos_(0),  //double x_pos = 0.0;
+  y_pos_(0),  // double y_pos = 0.0;
+  heading_(0)  // double theta = 0.0;
+  ros::Time current_time;
+  ros::Time speed_time(0.0);
 
-
-
-
-linear_velocity_x_(0),
-linear_velocity_y_(0),
-angular_velocity_z_(0),
-last_vel_time_(0),
-vel_dt_(0),
-x_pos_(0),  //double x_pos = 0.0;
-y_pos_(0),  // double y_pos = 0.0;
-heading_(0)  // double theta = 0.0;
-ros::Time current_time;
-ros::Time speed_time(0.0);
-
- void velCallback( const geometry_msgs::Vector3Stamped& vel) {
-// void handle_speed( const geometry_msgs::Vector3Stamped& speed) {
-//  speed_act_left = trunc(speed.vector.x*100)/100;
-//  ROS_INFO("speed left : %f", speed_act_left);
-//  speed_act_right = trunc(speed.vector.y*100)/100;
-//  ROS_INFO("speed right : %f", speed_act_right);
+  void velCallback( const geometry_msgs::Vector3Stamped& vel) {
   speed_dt = speed.vector.z;
   speed_time = speed.header.stamp;
    
    
-   ros::Time current_time = ros::Time::now();
-
-    linear_velocity_x_  = vel.vector.x;
-    linear_velocity_y_  = vel.vector.x;
-    angular_velocity_z_ = vel.vector.z;
-                  temp??      = vel.header.stamp;
+  ros::Time current_time = ros::Time::now();
+  linear_velocity_x_  = vel.vector.x;
+  linear_velocity_y_  = vel.vector.x;
+  angular_velocity_z_ = vel.vector.z;
+  temp??      = vel.header.stamp;
    
-    vel_dt_ = (current_time - last_vel_time_).toSec();
-    last_vel_time_ = current_time;
+  vel_dt_ = (current_time - last_vel_time_).toSec();
+  last_vel_time_ = current_time;
 }
 
-int main(int argc, char** argv){
+  int main(int argc, char** argv){
   ros::init(argc, argv, "rjbot_controller");
 
  //ros::init(argc, argv, "lino_base_node");
